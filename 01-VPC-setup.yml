@@ -5,56 +5,49 @@
   tasks:
     - name: Create the AWS VPC
       amazon.aws.ec2_vpc_net:
-        name: VPCLCL42837_FIRST
+        name:  Project-90
         cidr_block: 10.0.0.0/20
-        region: us-west-2
       register: vpc_info
     - name: VPC Public Subnet in AZ1
       amazon.aws.ec2_vpc_subnet:
         cidr: 10.0.0.0/24
-        region: us-west-2
-        az: us-west-2a
+        az: us-east-1a
         vpc_id: "{{ vpc_info.vpc.id }}"
         tags:
-          Name: BUILD00001
+          Name: Project-90-sbpublic1
       register: subnet_info1
     - name: VPC Private Subnet in AZ1
       amazon.aws.ec2_vpc_subnet:
         cidr: 10.0.1.0/24
-        region: us-west-2
-        az: us-west-2a
+        az: us-east-1a
         vpc_id: "{{ vpc_info.vpc.id }}"
         tags:
-          Name: DEPLOY00001
+          Name: Project-90-sbprivate1
       register: subnet_info11
     - name: VPC Public Subnet in AZ2
       amazon.aws.ec2_vpc_subnet:
         cidr: 10.0.2.0/24
-        region: us-west-2
-        az: us-west-2b
+        az: us-east-1b
         vpc_id: "{{ vpc_info.vpc.id }}"
         tags:
-          Name: BUILD00011
+          Name: Project-90-sbpublic2
       register: subnet_info2
     - name: VPC Private Subnet in AZ2
       amazon.aws.ec2_vpc_subnet:
         cidr: 10.0.3.0/24
-        region: us-west-2
-        az: us-west-2b
+        az: us-east-1b
         vpc_id: "{{ vpc_info.vpc.id }}"
         tags:
-          Name: DEPLOY00011
+          Name: Project-90-sbprivate1
       register: subnet_info12
     - name: Create VPC INTERNET GATEWAY
       ec2_vpc_igw:
         vpc_id: "{{ vpc_info.vpc.id }}"
-        region: us-west-2
         tags:
-          Name: VPCLCL42837_FIRST_IGW
+          Name: Project-90_IGW
       register: igw_info
     - name: Create Route table
       amazon.aws.ec2_vpc_route_table:
-        region: us-west-2
         subnets:
           - "{{ subnet_info1.subnet.id }}"
           - "{{ subnet_info2.subnet.id }}"
@@ -63,32 +56,26 @@
             gateway_id: "{{ igw_info.gateway_id }}"
         vpc_id: "{{ vpc_info.vpc.id }}"
         tags:
-          Name: VPCLCL42837_FIRST_RT
+          Name: Project-90_RT
     - name: Create Route table
       amazon.aws.ec2_vpc_route_table:
-        region: us-west-2
         subnets:
           - "{{ subnet_info11.subnet.id }}"
           - "{{ subnet_info12.subnet.id }}"
         vpc_id: "{{ vpc_info.vpc.id }}"
         tags:
-          Name: VPCLCL42837_FIRST_RT
+          Name: Project-90_RTprivate
     - name: Create a Security Group
       amazon.aws.ec2_group:
-        name: VPCLCL42837_FIRST_GRP
+        name: Project-90_GRP
         description: SSH and HTTP access
         vpc_id: "{{ vpc_info.vpc.id }}"
-        region: us-west-2
         rules:
           - proto: tcp
             ports:
               - 22
               - 80
             cidr_ip: 0.0.0.0/0
-
-
-
-
 
 
 
